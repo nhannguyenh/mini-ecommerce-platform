@@ -1,3 +1,16 @@
+logging:
+  level:
+    org.springframework.security: DEBUG
+
 spring:
   application:
     name: MiniEcommercePlatform
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    username: admin
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
