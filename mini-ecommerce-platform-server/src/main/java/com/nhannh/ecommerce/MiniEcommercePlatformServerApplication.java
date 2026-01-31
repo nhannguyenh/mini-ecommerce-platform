@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MiniEcommercePlatformApplication {
+public class MiniEcommercePlatformServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MiniEcommercePlatformApplication.class, args);
+        SpringApplication.run(MiniEcommercePlatformServerApplication.class, args);
     }
 
 }
