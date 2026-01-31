@@ -14,9 +14,10 @@ public class UserMapper {
 
     public User mapToUser(UserDto userDto) {
         return User.builder()
+                .id(userDto.getId())
                 .email(userDto.getEmail())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .role(UserRole.USER_ROLE)
+                .role(UserRole.USER)
                 .createdOn(userDto.getCreatedOn())
                 .modifiedOn(userDto.getModifiedOn())
                 .build();
