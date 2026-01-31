@@ -19,7 +19,7 @@ public class EcommerceExceptionHandler {
         log.error("Unexpected error occurred", e);
         ApiErrorResponseDto error = ApiErrorResponseDto.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(e.getMessage())
+                .message(getDetailsMessage(e))
                 .build();
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
