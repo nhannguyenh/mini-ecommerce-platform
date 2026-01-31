@@ -1,3 +1,11 @@
+jwt:
+  secret: aG51mfbYiVoX6hzSLfQQfCfsXuH5tTkvMwJM28u5p552f7ngBump1GWoXC5HPHoozyvJ9VzeYbRhLONC3jNcZa
+  lifespan: 3600000
+
+logging:
+  level:
+    '[org.springframework.security]': DEBUG
+
 spring:
   application:
     name: MiniEcommercePlatform
