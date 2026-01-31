@@ -1,4 +1,20 @@
 services:
+  ecommerce_server:
+    build:
+      context: ./mini-ecommerce-platform-server
+    image: mini-ecommerce-platform-server:latest
+    container_name: ecommerce_server
+    environment:
+      # Override the application.yaml values
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres_db
+    networks:
+      - ecommerce-network
   postgres_db:
     image: postgres:15
     container_name: mini_ecommerce_db
@@ -10,6 +26,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+
 volumes:
   postgres-data:
     name: ecommerce_data
+
+networks:
+  ecommerce-network:
+    driver: bridge
+    name: ecommerce-network
