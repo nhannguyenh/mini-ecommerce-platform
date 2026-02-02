@@ -11,3 +11,5 @@ CREATE TABLE users (
     CONSTRAINT uk_users_email UNIQUE (email),
     CONSTRAINT ck_users_role CHECK (role IN ('ADMIN', 'USER'))
 );
+
+CREATE INDEX idx_users_role ON users(role);
