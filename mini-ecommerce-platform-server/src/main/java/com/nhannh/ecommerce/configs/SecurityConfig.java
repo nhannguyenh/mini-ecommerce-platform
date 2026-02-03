@@ -1,5 +1,6 @@
 package com.nhannh.ecommerce.configs;
 
+import com.nhannh.ecommerce.domain.UserRole;
 import com.nhannh.ecommerce.filters.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,9 +24,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .authorizeHttpRequests(auth -> auth
+                        // public endpoints
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+
+                        // admin can access everything
+                        .requestMatchers("/**").hasRole(UserRole.ADMIN.name())
+
+                        // any other request must be authenticated
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())

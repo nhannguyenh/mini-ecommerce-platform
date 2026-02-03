@@ -1,4 +1,4 @@
-package com.nhannh.ecommerce.services;
+package com.nhannh.ecommerce.services.impl;
 
 import com.nhannh.ecommerce.domain.EcommerceUserDetails;
 import com.nhannh.ecommerce.domain.entities.User;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EcommerceUserDetailsService implements UserDetailsService {
+public class EcommerceUserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override

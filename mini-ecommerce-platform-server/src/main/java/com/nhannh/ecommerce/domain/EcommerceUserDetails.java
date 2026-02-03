@@ -12,11 +12,16 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class EcommerceUserDetails implements UserDetails {
+    private static final String ROLE_PREFIX = "ROLE_";
+
     private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(UserRole.USER.name()));
+        if (UserRole.ADMIN.equals(user.getRole())) {
+            return List.of(new SimpleGrantedAuthority(ROLE_PREFIX + UserRole.ADMIN.name()));
+        }
+        return List.of(new SimpleGrantedAuthority(ROLE_PREFIX + UserRole.USER.name()));
     }
 
     @Override
