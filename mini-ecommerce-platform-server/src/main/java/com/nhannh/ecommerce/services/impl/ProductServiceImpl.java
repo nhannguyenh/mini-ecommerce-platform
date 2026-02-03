@@ -8,8 +8,10 @@ import com.nhannh.ecommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product createProduct(ProductDto productDto) {
         return productRepository.save(productMapper.mapToEnity(productDto));
+    }
+
+    @Override
+    public Product updateProduct(Long productId, ProductDto productDto) {
+        Optional<Product> oldProduct = productRepository.findById(productId);
+        if (oldProduct.isPresent()) {
+            productDto.setId(productId);
+            return productRepository.save(productMapper.mapToEnity(productDto));
+        }
+        throw new NoSuchElementException(String.format("Cannot found product with id: %d", productId));
     }
 
     @Override
