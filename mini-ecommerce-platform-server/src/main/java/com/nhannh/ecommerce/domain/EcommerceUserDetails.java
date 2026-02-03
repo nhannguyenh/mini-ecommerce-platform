@@ -12,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class EcommerceUserDetails implements UserDetails {
-    private static final String ROLE_PREFIX = "ROLE";
+    private static final String ROLE_PREFIX = "ROLE_";
 
     private final User user;
 
