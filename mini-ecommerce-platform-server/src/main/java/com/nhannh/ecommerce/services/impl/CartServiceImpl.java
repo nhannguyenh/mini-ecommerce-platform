@@ -2,9 +2,11 @@ package com.nhannh.ecommerce.services.impl;
 
 import com.nhannh.ecommerce.domain.CartStatus;
 import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
+import com.nhannh.ecommerce.domain.dtos.CartDto;
 import com.nhannh.ecommerce.domain.entities.Cart;
 import com.nhannh.ecommerce.domain.entities.CartItem;
 import com.nhannh.ecommerce.domain.entities.Product;
+import com.nhannh.ecommerce.mappers.CartMapper;
 import com.nhannh.ecommerce.repositories.CartItemRepository;
 import com.nhannh.ecommerce.repositories.CartRepository;
 import com.nhannh.ecommerce.repositories.ProductRepository;
@@ -19,9 +21,23 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
+    private final CartMapper cartMapper;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
+
+    @Override
+    public CartDto getCart(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseGet(() -> cartRepository.save(
+                        Cart.builder()
+                                .userId(userId)
+                                .status(CartStatus.ACTIVE)
+                                .totalPrice(0.0)
+                                .build()
+                ));
+        return cartMapper.mapToDto(cart);
+    }
 
     @Override
     @Transactional

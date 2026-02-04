@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Data
@@ -17,6 +18,7 @@ public class CartDto {
     private Long userId;
     private CartStatus status;
     private Double totalPrice;
+    private List<Long> items;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
 }
