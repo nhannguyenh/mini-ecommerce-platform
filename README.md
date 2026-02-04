@@ -16,12 +16,6 @@ This project focuses on:
 - Docker & Docker compose
 - PostgreSQL
 
-## Functional Scope
-
-- User registration & login (JWT authentication)
-- Product management (create, list)
-- Secured REST APIs
-
 # Getting started with Docker compose on local machine
 
 1. Get the latest code on the main branch
