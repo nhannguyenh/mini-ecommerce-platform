@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Data
@@ -31,6 +33,14 @@ public class Cart extends AbstractEntity {
     @Column(nullable = false)
     private Double totalPrice;
 
+    @OneToMany(
+            mappedBy = "cart",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private List<CartItem> items = new ArrayList<>();
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -39,11 +49,12 @@ public class Cart extends AbstractEntity {
         return Objects.equals(id, cart.id)
                 && Objects.equals(userId, cart.userId)
                 && status == cart.status
-                && Objects.equals(totalPrice, cart.totalPrice);
+                && Objects.equals(totalPrice, cart.totalPrice)
+                && Objects.equals(items, cart.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, userId, status, totalPrice);
+        return Objects.hash(super.hashCode(), id, userId, status, totalPrice, items);
     }
 }
