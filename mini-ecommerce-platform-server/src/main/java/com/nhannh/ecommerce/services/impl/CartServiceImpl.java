@@ -3,28 +3,33 @@ package com.nhannh.ecommerce.services.impl;
 import com.nhannh.ecommerce.domain.CartStatus;
 import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
 import com.nhannh.ecommerce.domain.dtos.CartDto;
+import com.nhannh.ecommerce.domain.dtos.CartItemDto;
+import com.nhannh.ecommerce.domain.dtos.ProductDto;
 import com.nhannh.ecommerce.domain.entities.Cart;
 import com.nhannh.ecommerce.domain.entities.CartItem;
-import com.nhannh.ecommerce.domain.entities.Product;
+import com.nhannh.ecommerce.mappers.CartItemMapper;
 import com.nhannh.ecommerce.mappers.CartMapper;
-import com.nhannh.ecommerce.repositories.CartItemRepository;
+import com.nhannh.ecommerce.mappers.ProductMapper;
 import com.nhannh.ecommerce.repositories.CartRepository;
-import com.nhannh.ecommerce.repositories.ProductRepository;
+import com.nhannh.ecommerce.services.CartItemService;
 import com.nhannh.ecommerce.services.CartService;
+import com.nhannh.ecommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
+    private final ProductMapper productMapper;
+    private final CartItemMapper cartItemMapper;
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
-    private final CartItemRepository cartItemRepository;
+
+    private final ProductService productService;
+    private final CartItemService cartItemService;
 
     @Override
     public CartDto getCart(Long userId) {
@@ -41,42 +46,28 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public Cart addItems(Long userId, AddCartItemRequestDto addCartItemRequestDto) {
-        // get or create cart if it's not exist
-        Cart cart = getOrCreateCart(userId);
+    public CartDto addItems(Long userId, AddCartItemRequestDto itemRequestDto) {
+        // check cart is existed or not
+        CartDto cartDto = getCart(userId);
 
-        Product product = productRepository.findById(addCartItemRequestDto.getProductId())
-                .orElseThrow(() -> new NoSuchElementException(
-                        String.format("Cannot found the product with id: %d", addCartItemRequestDto.getProductId())
-                ));
+        // check product is existed or not
+        ProductDto productDto = productService.getProductById(itemRequestDto.getProductId());
 
-        Integer quantity = addCartItemRequestDto.getQuantity();
-        CartItem cartItemSaved = cartItemRepository.save(
-                CartItem.builder()
-                    .cart(cart)
-                    .product(product)
-                    .quantity(quantity)
-                    .price(product.getPrice() * quantity)
-                    .build()
-        );
+        // Create item
+        CartItemDto cartItemDto = CartItemDto.builder()
+                .cart(cartMapper.mapToEntity(cartDto))
+                .product(productMapper.mapToEntity(productDto))
+                .quantity(itemRequestDto.getQuantity())
+                .price(productDto.getPrice())
+                .build();
+        cartItemDto = cartItemService.addCartItem(cartItemDto);
 
-        List<CartItem> items = cart.getItems();
-        items.add(cartItemSaved);
+        // add item to cart
+        List<CartItem> items = cartDto.getItems();
+        items.add(cartItemMapper.mapToEntity(cartItemDto));
+        cartDto.setItems(items);
 
-        cart.setItems(items);
-        return cartRepository.save(cart);
-    }
-
-    private Cart getOrCreateCart(Long userId) {
-        return cartRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    return cartRepository.save(
-                            Cart.builder()
-                                    .userId(userId)
-                                    .status(CartStatus.ACTIVE)
-                                    .totalPrice(0.0)
-                                    .build()
-                    );
-                });
+        Cart savedCart = cartRepository.save(cartMapper.mapToEntity(cartDto));
+        return cartMapper.mapToDto(savedCart);
     }
 }

@@ -2,9 +2,8 @@ package com.nhannh.ecommerce.controllers;
 
 import com.nhannh.ecommerce.domain.EcommerceUserDetails;
 import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
-import com.nhannh.ecommerce.domain.dtos.CardResponseDto;
 import com.nhannh.ecommerce.domain.dtos.CartDto;
-import com.nhannh.ecommerce.domain.entities.Cart;
+import com.nhannh.ecommerce.domain.dtos.CartResponseDto;
 import com.nhannh.ecommerce.domain.entities.CartItem;
 import com.nhannh.ecommerce.services.CartService;
 import lombok.RequiredArgsConstructor;
@@ -24,20 +23,24 @@ public class CartController {
         return ResponseEntity.ok(cartService.getCart(userDetails.getUserId()));
     }
 
-    @PostMapping("/{userId}/items")
-    public ResponseEntity<CardResponseDto> addItem(@PathVariable Long userId,
+    @PostMapping("/items")
+    public ResponseEntity<CartResponseDto> addItem(@AuthenticationPrincipal EcommerceUserDetails userDetails,
                                                    @RequestBody AddCartItemRequestDto addCartItemRequestDto) {
-        Cart cart = cartService.addItems(userId, addCartItemRequestDto);
-        CardResponseDto cardResponseDto = CardResponseDto.builder()
-                .id(cart.getId())
-                .userId(cart.getUserId())
-                .status(cart.getStatus())
-                .totalPrice(cart.getTotalPrice())
-                .items(cart.getItems().stream()
-                        .map(CartItem::getId)
-                        .toList()
-                )
-                .build();
-        return new ResponseEntity<>(cardResponseDto, HttpStatus.CREATED);
+        CartDto cartDto = cartService.addItems(userDetails.getUserId(), addCartItemRequestDto);
+        return new ResponseEntity<>(
+                CartResponseDto.builder()
+                        .id(cartDto.getId())
+                        .userId(cartDto.getUserId())
+                        .status(cartDto.getStatus())
+                        .totalPrice(cartDto.getTotalPrice())
+                        .items(cartDto.getItems().stream()
+                                .map(CartItem::getId)
+                                .toList()
+                        )
+                        .createdOn(cartDto.getCreatedOn())
+                        .modifiedOn(cartDto.getModifiedOn())
+                        .build(),
+                HttpStatus.CREATED
+        );
     }
 }
