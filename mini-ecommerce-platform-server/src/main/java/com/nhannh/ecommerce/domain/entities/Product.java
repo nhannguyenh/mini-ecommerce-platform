@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Objects;
+
 @Data
 @SuperBuilder
 @AllArgsConstructor
@@ -32,4 +34,22 @@ public class Product extends AbstractEntity {
 
     @Column(nullable = false)
     private Integer stockQuantity;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id)
+                && Objects.equals(name, product.name)
+                && Objects.equals(description, product.description)
+                && Objects.equals(price, product.price)
+                && Objects.equals(sku, product.sku)
+                && Objects.equals(stockQuantity, product.stockQuantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, name, description, price, sku, stockQuantity);
+    }
 }
