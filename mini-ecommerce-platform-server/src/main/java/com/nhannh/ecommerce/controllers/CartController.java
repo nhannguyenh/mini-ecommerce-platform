@@ -1,15 +1,14 @@
 package com.nhannh.ecommerce.controllers;
 
-import com.nhannh.ecommerce.domain.dtos.CartDto;
+import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
+import com.nhannh.ecommerce.domain.dtos.CardResponseDto;
 import com.nhannh.ecommerce.domain.entities.Cart;
+import com.nhannh.ecommerce.domain.entities.CartItem;
 import com.nhannh.ecommerce.services.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/carts")
@@ -17,8 +16,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartController {
     private final CartService cartService;
 
-    @PostMapping
-    public ResponseEntity<Cart> createCart(@RequestBody CartDto cartDto) {
-        return new ResponseEntity<>(cartService.createCart(cartDto), HttpStatus.CREATED);
+    @PostMapping("/{userId}/items")
+    public ResponseEntity<CardResponseDto> addItem(@PathVariable Long userId,
+                                                   @RequestBody AddCartItemRequestDto addCartItemRequestDto) {
+        Cart cart = cartService.addItems(userId, addCartItemRequestDto);
+        CardResponseDto cardResponseDto = CardResponseDto.builder()
+                .id(cart.getId())
+                .userId(cart.getUserId())
+                .status(cart.getStatus())
+                .totalPrice(cart.getTotalPrice())
+                .items(cart.getItems().stream()
+                        .map(CartItem::getId)
+                        .toList()
+                )
+                .build();
+        return new ResponseEntity<>(cardResponseDto, HttpStatus.CREATED);
     }
 }

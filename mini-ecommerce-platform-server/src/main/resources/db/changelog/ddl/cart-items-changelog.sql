@@ -7,6 +7,8 @@ CREATE TABLE cart_items (
     product_id BIGINT NOT NULL,
     quantity INTEGER NOT NULL,
     price NUMERIC(19,2) NOT NULL,
+    created_on TIMESTAMP NOT NULL,
+    modified_on TIMESTAMP NOT NULL,
 
     CONSTRAINT fk_cart_items_cart
         FOREIGN KEY (cart_id)

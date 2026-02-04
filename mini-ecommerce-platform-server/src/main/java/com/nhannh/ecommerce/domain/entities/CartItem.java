@@ -1,9 +1,17 @@
 package com.nhannh.ecommerce.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
 
+@Data
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "cart_items")
 public class CartItem extends AbstractEntity {
