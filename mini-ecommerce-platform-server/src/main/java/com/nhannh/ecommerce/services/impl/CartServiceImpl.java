@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +38,8 @@ public class CartServiceImpl implements CartService {
                                 .totalPrice(0.0)
                                 .build()
                 ));
-        return cartMapper.mapToDto(cart);
+        List<CartItemDto> items = cartItemService.findByCartId(cart.getId());
+        return cartMapper.mapToDto(cart, items);
     }
 
     @Override
@@ -51,8 +53,12 @@ public class CartServiceImpl implements CartService {
 
         // check and update items
         List<CartItemDto> items = cartItemService.findByCartId(cartDto.getId());
-        double totalPrice = 0;
-        if (items.isEmpty()) {
+        Set<Long> productIds = items.stream()
+                .map(CartItemDto::getProductId)
+                .collect(Collectors.toSet());
+
+        double totalPrice = cartDto.getTotalPrice();
+        if (items.isEmpty() || !productIds.contains(itemRequestDto.getProductId())) {
             // Create item
             CartItemDto cartItemDto = CartItemDto.builder()
                     .cartId(cartDto.getId())
@@ -60,21 +66,27 @@ public class CartServiceImpl implements CartService {
                     .quantity(itemRequestDto.getQuantity())
                     .price(productDto.getPrice())
                     .build();
-            cartItemService.addCartItem(cartItemDto);
+            CartItemDto newItem = cartItemService.addCartItem(cartItemDto);
+            totalPrice += newItem.getPrice() * newItem.getQuantity();
+
+            cartDto.getItems().add(newItem.getId());
+            cartDto.setTotalPrice(totalPrice);
         } else {
+            // calculate total price and update quantity
             for (CartItemDto item : items) {
+                double oldPrice = 0;
                 if (itemRequestDto.getProductId().equals(item.getProductId())) {
+                    oldPrice = item.getQuantity() * item.getPrice();
                     item.setQuantity(itemRequestDto.getQuantity());
                     cartItemService.addCartItem(item);
                 }
-                totalPrice += item.getQuantity() * item.getPrice();
+                totalPrice += item.getQuantity() * item.getPrice() - oldPrice;
             }
+            cartDto.setTotalPrice(totalPrice);
         }
-        cartDto.setItems(items.stream()
-                .map(CartItemDto::getId)
-                .collect(Collectors.toSet())
-        );
-        cartDto.setTotalPrice(totalPrice);
+
+        // update cart
+        cartRepository.save(cartMapper.mapToEntity(cartDto));
         return cartDto;
     }
 }

@@ -1,8 +1,12 @@
 package com.nhannh.ecommerce.mappers;
 
 import com.nhannh.ecommerce.domain.dtos.CartDto;
+import com.nhannh.ecommerce.domain.dtos.CartItemDto;
 import com.nhannh.ecommerce.domain.entities.Cart;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CartMapper {
@@ -18,12 +22,16 @@ public class CartMapper {
                 .build();
     }
 
-    public CartDto mapToDto(Cart cart) {
+    public CartDto mapToDto(Cart cart, List<CartItemDto> items) {
         return CartDto.builder()
                 .id(cart.getId())
                 .userId(cart.getUserId())
                 .status(cart.getStatus())
                 .totalPrice(cart.getTotalPrice())
+                .items(items.stream()
+                        .map(CartItemDto::getId)
+                        .collect(Collectors.toSet())
+                )
                 .createdOn(cart.getCreatedOn())
                 .modifiedOn(cart.getModifiedOn())
                 .build();
