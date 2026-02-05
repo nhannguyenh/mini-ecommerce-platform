@@ -1,24 +1,22 @@
 package com.nhannh.ecommerce.domain.dtos;
 
-import com.nhannh.ecommerce.domain.CartStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Builder
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class CartDto {
+@NoArgsConstructor
+public class CartItemDto {
     private Long id;
-    private Long userId;
-    private CartStatus status;
-    private Double totalPrice;
-    private Set<Long> items;
+    private Long cartId;
+    private Long productId;
+    private Integer quantity;
+    private Double price;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
 }
