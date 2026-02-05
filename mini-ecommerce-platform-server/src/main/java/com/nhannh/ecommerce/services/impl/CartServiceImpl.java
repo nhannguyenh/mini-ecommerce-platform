@@ -12,7 +12,6 @@ import com.nhannh.ecommerce.services.CartItemService;
 import com.nhannh.ecommerce.services.CartService;
 import com.nhannh.ecommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
@@ -51,9 +49,7 @@ public class CartServiceImpl implements CartService {
 
         // validate product entity
         ProductDto productDto = productService.getProductById(itemRequestDto.getProductId());
-        if (itemRequestDto.getQuantity() > productDto.getStockQuantity()) {
-            throw new IllegalArgumentException("Product quantity is exceeding the available stock quantity");
-        }
+        validate(productDto, itemRequestDto);
 
         // check and update items
         List<CartItemDto> items = cartItemService.findByCartId(cartDto.getId());
@@ -91,5 +87,16 @@ public class CartServiceImpl implements CartService {
         // update cart
         cartRepository.save(cartMapper.mapToEntity(cartDto));
         return cartDto;
+    }
+
+    @Override
+    public void validate(ProductDto productDto, CartItemRequestDto itemRequestDto) {
+        if (itemRequestDto.getQuantity() < 1) {
+            throw new IllegalArgumentException("Product quantity must be greater than or equal to 1");
+        }
+
+        if (itemRequestDto.getQuantity() > productDto.getStockQuantity()) {
+            throw new IllegalArgumentException("Product quantity is exceeding the available stock quantity");
+        }
     }
 }
