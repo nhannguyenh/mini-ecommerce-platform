@@ -1,9 +1,9 @@
 package com.nhannh.ecommerce.services.impl;
 
 import com.nhannh.ecommerce.domain.CartStatus;
-import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
 import com.nhannh.ecommerce.domain.dtos.CartDto;
 import com.nhannh.ecommerce.domain.dtos.CartItemDto;
+import com.nhannh.ecommerce.domain.dtos.CartItemRequestDto;
 import com.nhannh.ecommerce.domain.dtos.ProductDto;
 import com.nhannh.ecommerce.domain.entities.Cart;
 import com.nhannh.ecommerce.mappers.CartMapper;
@@ -12,6 +12,7 @@ import com.nhannh.ecommerce.services.CartItemService;
 import com.nhannh.ecommerce.services.CartService;
 import com.nhannh.ecommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
@@ -44,12 +46,14 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto addItems(Long userId, AddCartItemRequestDto itemRequestDto) {
-        // check cart is existed or not
+    public CartDto addItems(Long userId, CartItemRequestDto itemRequestDto) {
         CartDto cartDto = getCart(userId);
 
-        // check product is existed or not
+        // validate product entity
         ProductDto productDto = productService.getProductById(itemRequestDto.getProductId());
+        if (itemRequestDto.getQuantity() > productDto.getStockQuantity()) {
+            throw new IllegalArgumentException("Product quantity is exceeding the available stock quantity");
+        }
 
         // check and update items
         List<CartItemDto> items = cartItemService.findByCartId(cartDto.getId());
@@ -59,7 +63,6 @@ public class CartServiceImpl implements CartService {
 
         double totalPrice = cartDto.getTotalPrice();
         if (items.isEmpty() || !productIds.contains(itemRequestDto.getProductId())) {
-            // Create item
             CartItemDto cartItemDto = CartItemDto.builder()
                     .cartId(cartDto.getId())
                     .productId(itemRequestDto.getProductId())
@@ -79,8 +82,8 @@ public class CartServiceImpl implements CartService {
                     oldPrice = item.getQuantity() * item.getPrice();
                     item.setQuantity(itemRequestDto.getQuantity());
                     cartItemService.addCartItem(item);
+                    totalPrice += item.getQuantity() * item.getPrice() - oldPrice;
                 }
-                totalPrice += item.getQuantity() * item.getPrice() - oldPrice;
             }
             cartDto.setTotalPrice(totalPrice);
         }

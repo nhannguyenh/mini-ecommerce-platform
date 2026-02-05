@@ -1,9 +1,9 @@
 package com.nhannh.ecommerce.services;
 
-import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
 import com.nhannh.ecommerce.domain.dtos.CartDto;
+import com.nhannh.ecommerce.domain.dtos.CartItemRequestDto;
 
 public interface CartService {
     CartDto getCart(Long userId);
-    CartDto addItems(Long userId, AddCartItemRequestDto addCartItemRequestDto);
+    CartDto addItems(Long userId, CartItemRequestDto addCartItemRequestDto);
 }

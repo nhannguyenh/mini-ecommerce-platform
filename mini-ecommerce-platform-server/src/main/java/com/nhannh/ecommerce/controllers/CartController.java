@@ -1,8 +1,8 @@
 package com.nhannh.ecommerce.controllers;
 
 import com.nhannh.ecommerce.domain.EcommerceUserDetails;
-import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
 import com.nhannh.ecommerce.domain.dtos.CartDto;
+import com.nhannh.ecommerce.domain.dtos.CartItemRequestDto;
 import com.nhannh.ecommerce.services.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class CartController {
 
     @PostMapping("/items")
     public ResponseEntity<CartDto> addItem(@AuthenticationPrincipal EcommerceUserDetails userDetails,
-                                                   @RequestBody AddCartItemRequestDto addCartItemRequestDto) {
+                                                   @RequestBody CartItemRequestDto addCartItemRequestDto) {
         return new ResponseEntity<>(
                 cartService.addItems(userDetails.getUserId(), addCartItemRequestDto),
                 HttpStatus.CREATED
