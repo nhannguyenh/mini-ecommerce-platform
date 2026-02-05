@@ -20,19 +20,11 @@ public class CartItem extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "cart_id",
-            nullable = false
-    )
-    private Cart cart;
+    @Column(nullable = false)
+    private Long cartId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "product_id",
-            nullable = false
-    )
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
 
     @Column(nullable = false)
     private Integer quantity;
@@ -46,14 +38,14 @@ public class CartItem extends AbstractEntity {
         if (!super.equals(o)) return false;
         CartItem cartItem = (CartItem) o;
         return Objects.equals(id, cartItem.id)
-                && Objects.equals(cart, cartItem.cart)
-                && Objects.equals(product, cartItem.product)
+                && Objects.equals(cartId, cartItem.cartId)
+                && Objects.equals(productId, cartItem.productId)
                 && Objects.equals(quantity, cartItem.quantity)
                 && Objects.equals(price, cartItem.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, cart, product, quantity, price);
+        return Objects.hash(super.hashCode(), id, cartId, productId, quantity, price);
     }
 }

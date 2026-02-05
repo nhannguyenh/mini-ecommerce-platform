@@ -8,6 +8,8 @@ import com.nhannh.ecommerce.services.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
@@ -18,5 +20,12 @@ public class CartItemServiceImpl implements CartItemService {
     public CartItemDto addCartItem(CartItemDto cartItemDto) {
         CartItem cartItem = cartItemRepository.save(cartItemMapper.mapToEntity(cartItemDto));
         return cartItemMapper.mapToDto(cartItem);
+    }
+
+    @Override
+    public List<CartItemDto> findByCartId(Long cartId) {
+        return cartItemRepository.findByCartId(cartId).stream()
+                .map(cartItemMapper::mapToDto)
+                .toList();
     }
 }

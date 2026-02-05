@@ -6,10 +6,7 @@ import com.nhannh.ecommerce.domain.dtos.CartDto;
 import com.nhannh.ecommerce.domain.dtos.CartItemDto;
 import com.nhannh.ecommerce.domain.dtos.ProductDto;
 import com.nhannh.ecommerce.domain.entities.Cart;
-import com.nhannh.ecommerce.domain.entities.CartItem;
-import com.nhannh.ecommerce.mappers.CartItemMapper;
 import com.nhannh.ecommerce.mappers.CartMapper;
-import com.nhannh.ecommerce.mappers.ProductMapper;
 import com.nhannh.ecommerce.repositories.CartRepository;
 import com.nhannh.ecommerce.services.CartItemService;
 import com.nhannh.ecommerce.services.CartService;
@@ -19,13 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
-    private final ProductMapper productMapper;
-    private final CartItemMapper cartItemMapper;
     private final CartRepository cartRepository;
 
     private final ProductService productService;
@@ -53,21 +49,32 @@ public class CartServiceImpl implements CartService {
         // check product is existed or not
         ProductDto productDto = productService.getProductById(itemRequestDto.getProductId());
 
-        // Create item
-        CartItemDto cartItemDto = CartItemDto.builder()
-                .cart(cartMapper.mapToEntity(cartDto))
-                .product(productMapper.mapToEntity(productDto))
-                .quantity(itemRequestDto.getQuantity())
-                .price(productDto.getPrice())
-                .build();
-        cartItemDto = cartItemService.addCartItem(cartItemDto);
-
-        // add item to cart
-        List<CartItem> items = cartDto.getItems();
-        items.add(cartItemMapper.mapToEntity(cartItemDto));
-        cartDto.setItems(items);
-
-        Cart savedCart = cartRepository.save(cartMapper.mapToEntity(cartDto));
-        return cartMapper.mapToDto(savedCart);
+        // check and update items
+        List<CartItemDto> items = cartItemService.findByCartId(cartDto.getId());
+        double totalPrice = 0;
+        if (items.isEmpty()) {
+            // Create item
+            CartItemDto cartItemDto = CartItemDto.builder()
+                    .cartId(cartDto.getId())
+                    .productId(itemRequestDto.getProductId())
+                    .quantity(itemRequestDto.getQuantity())
+                    .price(productDto.getPrice())
+                    .build();
+            cartItemService.addCartItem(cartItemDto);
+        } else {
+            for (CartItemDto item : items) {
+                if (itemRequestDto.getProductId().equals(item.getProductId())) {
+                    item.setQuantity(itemRequestDto.getQuantity());
+                    cartItemService.addCartItem(item);
+                }
+                totalPrice += item.getQuantity() * item.getPrice();
+            }
+        }
+        cartDto.setItems(items.stream()
+                .map(CartItemDto::getId)
+                .collect(Collectors.toSet())
+        );
+        cartDto.setTotalPrice(totalPrice);
+        return cartDto;
     }
 }

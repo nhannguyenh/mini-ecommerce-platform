@@ -3,8 +3,6 @@ package com.nhannh.ecommerce.controllers;
 import com.nhannh.ecommerce.domain.EcommerceUserDetails;
 import com.nhannh.ecommerce.domain.dtos.AddCartItemRequestDto;
 import com.nhannh.ecommerce.domain.dtos.CartDto;
-import com.nhannh.ecommerce.domain.dtos.CartResponseDto;
-import com.nhannh.ecommerce.domain.entities.CartItem;
 import com.nhannh.ecommerce.services.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,22 +22,10 @@ public class CartController {
     }
 
     @PostMapping("/items")
-    public ResponseEntity<CartResponseDto> addItem(@AuthenticationPrincipal EcommerceUserDetails userDetails,
+    public ResponseEntity<CartDto> addItem(@AuthenticationPrincipal EcommerceUserDetails userDetails,
                                                    @RequestBody AddCartItemRequestDto addCartItemRequestDto) {
-        CartDto cartDto = cartService.addItems(userDetails.getUserId(), addCartItemRequestDto);
         return new ResponseEntity<>(
-                CartResponseDto.builder()
-                        .id(cartDto.getId())
-                        .userId(cartDto.getUserId())
-                        .status(cartDto.getStatus())
-                        .totalPrice(cartDto.getTotalPrice())
-                        .items(cartDto.getItems().stream()
-                                .map(CartItem::getId)
-                                .toList()
-                        )
-                        .createdOn(cartDto.getCreatedOn())
-                        .modifiedOn(cartDto.getModifiedOn())
-                        .build(),
+                cartService.addItems(userDetails.getUserId(), addCartItemRequestDto),
                 HttpStatus.CREATED
         );
     }

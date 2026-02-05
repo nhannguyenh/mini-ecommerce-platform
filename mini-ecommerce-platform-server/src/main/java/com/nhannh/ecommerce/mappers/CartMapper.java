@@ -13,7 +13,6 @@ public class CartMapper {
                 .userId(cartDto.getUserId())
                 .status(cartDto.getStatus())
                 .totalPrice(cartDto.getTotalPrice())
-                .items(cartDto.getItems())
                 .createdOn(cartDto.getCreatedOn())
                 .modifiedOn(cartDto.getModifiedOn())
                 .build();
@@ -25,7 +24,6 @@ public class CartMapper {
                 .userId(cart.getUserId())
                 .status(cart.getStatus())
                 .totalPrice(cart.getTotalPrice())
-                .items(cart.getItems())
                 .createdOn(cart.getCreatedOn())
                 .modifiedOn(cart.getModifiedOn())
                 .build();

@@ -10,17 +10,9 @@ CREATE TABLE cart_items (
     created_on TIMESTAMP NOT NULL,
     modified_on TIMESTAMP NOT NULL,
 
-    CONSTRAINT fk_cart_items_cart
-        FOREIGN KEY (cart_id)
-            REFERENCES carts(id)
-            ON DELETE CASCADE,
-
-    CONSTRAINT fk_cart_items_product
-        FOREIGN KEY (product_id)
-            REFERENCES products(id),
-
-    CONSTRAINT ck_cart_items_quantity
-        CHECK (quantity > 0)
+    CONSTRAINT fk_cart_items_cart FOREIGN KEY (cart_id) REFERENCES carts(id),
+    CONSTRAINT fk_cart_items_product FOREIGN KEY (product_id) REFERENCES products(id),
+    CONSTRAINT ck_cart_items_quantity CHECK (quantity > 0)
 );
 
 CREATE INDEX idx_cart_items_cart_id ON cart_items (cart_id);

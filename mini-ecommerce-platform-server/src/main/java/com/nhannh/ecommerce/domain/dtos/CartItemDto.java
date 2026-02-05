@@ -1,7 +1,5 @@
 package com.nhannh.ecommerce.domain.dtos;
 
-import com.nhannh.ecommerce.domain.entities.Cart;
-import com.nhannh.ecommerce.domain.entities.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CartItemDto {
     private Long id;
-    private Cart cart;
-    private Product product;
+    private Long cartId;
+    private Long productId;
     private Integer quantity;
     private Double price;
     private LocalDateTime createdOn;
