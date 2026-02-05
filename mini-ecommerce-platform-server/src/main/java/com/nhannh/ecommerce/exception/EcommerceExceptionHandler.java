@@ -2,7 +2,6 @@ package com.nhannh.ecommerce.exception;
 
 import com.nhannh.ecommerce.domain.dtos.ApiErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +54,16 @@ public class EcommerceExceptionHandler {
                 .message(getDetailsMessage(e))
                 .build();
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.error("The input data is incorrect", e);
+        ApiErrorResponseDto error = ApiErrorResponseDto.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(getDetailsMessage(e))
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     private String getDetailsMessage(Exception e) {
