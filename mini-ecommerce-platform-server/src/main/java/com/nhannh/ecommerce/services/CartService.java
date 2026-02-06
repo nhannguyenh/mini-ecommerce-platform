@@ -102,6 +102,19 @@ public class CartService {
         return cartDto;
     }
 
+    public CartDto clearCart(Long userId) {
+        CartDto cartDto = this.getCart(userId);
+        Set<Long> itemIds = cartDto.getItems();
+
+        cartItemService.removeAllItems(itemIds);
+        itemIds.clear();
+
+        cartDto.setItems(itemIds);
+        cartDto.setTotalPrice(0.0);
+        cartRepository.save(cartMapper.mapToEntity(cartDto));
+        return cartDto;
+    }
+
     private void validate(ProductDto productDto, CartItemRequestDto itemRequestDto) {
         if (itemRequestDto.getQuantity() < 1) {
             throw new IllegalArgumentException("Product quantity must be greater than or equal to 1");
