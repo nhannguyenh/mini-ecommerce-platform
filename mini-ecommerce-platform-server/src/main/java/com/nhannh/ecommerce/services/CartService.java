@@ -9,15 +9,14 @@ import com.nhannh.ecommerce.domain.entities.Cart;
 import com.nhannh.ecommerce.mappers.CartMapper;
 import com.nhannh.ecommerce.repositories.CartRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CartService {
@@ -98,7 +97,7 @@ public class CartService {
             cartDto.setItems(itemIds);
             cartRepository.save(cartMapper.mapToEntity(cartDto));
         } else {
-            log.warn("Item {} doesn't exist in the cart", itemId);
+            throw new NoSuchElementException(String.format("Item has id %d cannot be found in the current cart", itemId));
         }
         return cartDto;
     }
