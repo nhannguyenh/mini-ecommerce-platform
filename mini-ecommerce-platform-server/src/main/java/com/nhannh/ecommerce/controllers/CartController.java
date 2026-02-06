@@ -31,4 +31,9 @@ public class CartController {
                                             @PathVariable Long itemId) {
         return ResponseEntity.ok(cartService.removeItem(userDetails.getUserId(), itemId));
     }
+
+    @DeleteMapping
+    public ResponseEntity<CartDto> clearCart(@AuthenticationPrincipal EcommerceUserDetails userDetails) {
+        return ResponseEntity.ok(cartService.clearCart(userDetails.getUserId()));
+    }
 }

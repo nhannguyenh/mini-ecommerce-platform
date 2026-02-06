@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +45,10 @@ public class CartItemService {
     @Transactional
     public void removeItem(Long itemId) {
         cartItemRepository.deleteById(itemId);
+    }
+
+    @Transactional
+    public void removeAllItems(Set<Long> itemIds) {
+        cartItemRepository.deleteAllById(itemIds);
     }
 }
