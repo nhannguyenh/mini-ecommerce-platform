@@ -44,14 +44,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto addItems(Long userId, CartItemRequestDto itemRequestDto) {
+    public CartDto addOrUpdateCartItems(Long userId, CartItemRequestDto itemRequestDto) {
         CartDto cartDto = getCart(userId);
-
-        // validate product entity
         ProductDto productDto = productService.getProductById(itemRequestDto.getProductId());
-        validate(productDto, itemRequestDto);
+        this.validate(productDto, itemRequestDto);
 
-        // check and update items
         List<CartItemDto> items = cartItemService.findByCartId(cartDto.getId());
         Set<Long> productIds = items.stream()
                 .map(CartItemDto::getProductId)
@@ -65,32 +62,29 @@ public class CartServiceImpl implements CartService {
                     .quantity(itemRequestDto.getQuantity())
                     .price(productDto.getPrice())
                     .build();
-            CartItemDto newItem = cartItemService.addCartItem(cartItemDto);
+            CartItemDto newItem = cartItemService.addOrUpdateCartItem(cartItemDto);
             totalPrice += newItem.getPrice() * newItem.getQuantity();
 
             cartDto.getItems().add(newItem.getId());
             cartDto.setTotalPrice(totalPrice);
         } else {
-            // calculate total price and update quantity
             for (CartItemDto item : items) {
                 double oldPrice = 0;
                 if (itemRequestDto.getProductId().equals(item.getProductId())) {
                     oldPrice = item.getQuantity() * item.getPrice();
                     item.setQuantity(itemRequestDto.getQuantity());
-                    cartItemService.addCartItem(item);
+                    cartItemService.addOrUpdateCartItem(item);
                     totalPrice += item.getQuantity() * item.getPrice() - oldPrice;
                 }
             }
             cartDto.setTotalPrice(totalPrice);
         }
 
-        // update cart
         cartRepository.save(cartMapper.mapToEntity(cartDto));
         return cartDto;
     }
 
-    @Override
-    public void validate(ProductDto productDto, CartItemRequestDto itemRequestDto) {
+    private void validate(ProductDto productDto, CartItemRequestDto itemRequestDto) {
         if (itemRequestDto.getQuantity() < 1) {
             throw new IllegalArgumentException("Product quantity must be greater than or equal to 1");
         }
