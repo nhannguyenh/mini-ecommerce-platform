@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +19,13 @@ public class CartItemService {
     private final CartItemRepository cartItemRepository;
 
     @Transactional
-    public CartItemDto addOrUpdateCartItem(CartItemDto cartItemDto) {
-        CartItem cartItem = cartItemRepository.save(cartItemMapper.mapToEntity(cartItemDto));
-        return cartItemMapper.mapToDto(cartItem);
+    public CartItemDto findById(Long id) {
+        Optional<CartItem> cartItem = cartItemRepository.findById(id);
+        if (cartItem.isPresent()) {
+            return cartItemMapper.mapToDto(cartItem.get());
+        } else {
+            throw new NoSuchElementException(String.format("Item cannot be found with %d", id));
+        }
     }
 
     @Transactional
@@ -27,5 +33,16 @@ public class CartItemService {
         return cartItemRepository.findByCartId(cartId).stream()
                 .map(cartItemMapper::mapToDto)
                 .toList();
+    }
+
+    @Transactional
+    public CartItemDto addOrUpdateCartItem(CartItemDto cartItemDto) {
+        CartItem cartItem = cartItemRepository.save(cartItemMapper.mapToEntity(cartItemDto));
+        return cartItemMapper.mapToDto(cartItem);
+    }
+
+    @Transactional
+    public void removeItem(Long itemId) {
+        cartItemRepository.deleteById(itemId);
     }
 }
