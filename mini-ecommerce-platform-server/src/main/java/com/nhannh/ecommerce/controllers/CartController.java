@@ -5,7 +5,6 @@ import com.nhannh.ecommerce.domain.dtos.CartDto;
 import com.nhannh.ecommerce.domain.dtos.CartItemRequestDto;
 import com.nhannh.ecommerce.services.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +20,9 @@ public class CartController {
         return ResponseEntity.ok(cartService.getCart(userDetails.getUserId()));
     }
 
-    @PostMapping("/items")
-    public ResponseEntity<CartDto> addItem(@AuthenticationPrincipal EcommerceUserDetails userDetails,
+    @PostMapping
+    public ResponseEntity<CartDto> addItemsToCart(@AuthenticationPrincipal EcommerceUserDetails userDetails,
                                                    @RequestBody CartItemRequestDto addCartItemRequestDto) {
-        return new ResponseEntity<>(
-                cartService.addItems(userDetails.getUserId(), addCartItemRequestDto),
-                HttpStatus.CREATED
-        );
+        return ResponseEntity.ok(cartService.addOrUpdateCartItems(userDetails.getUserId(), addCartItemRequestDto));
     }
 }

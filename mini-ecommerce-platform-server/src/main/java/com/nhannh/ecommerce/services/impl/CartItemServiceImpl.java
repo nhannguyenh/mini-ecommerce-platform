@@ -17,7 +17,7 @@ public class CartItemServiceImpl implements CartItemService {
     private final CartItemRepository cartItemRepository;
 
     @Override
-    public CartItemDto addCartItem(CartItemDto cartItemDto) {
+    public CartItemDto addOrUpdateCartItem(CartItemDto cartItemDto) {
         CartItem cartItem = cartItemRepository.save(cartItemMapper.mapToEntity(cartItemDto));
         return cartItemMapper.mapToDto(cartItem);
     }
