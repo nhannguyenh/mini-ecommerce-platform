@@ -21,7 +21,7 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<CartDto> addItemsToCart(@AuthenticationPrincipal EcommerceUserDetails userDetails,
+    public ResponseEntity<CartDto> addOrUpdateCartItems(@AuthenticationPrincipal EcommerceUserDetails userDetails,
                                                    @RequestBody CartItemRequestDto addCartItemRequestDto) {
         return ResponseEntity.ok(cartService.addOrUpdateCartItems(userDetails.getUserId(), addCartItemRequestDto));
     }
