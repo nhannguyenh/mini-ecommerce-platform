@@ -23,6 +23,12 @@ public class CartController {
     @PostMapping
     public ResponseEntity<CartDto> addOrUpdateCartItems(@AuthenticationPrincipal EcommerceUserDetails userDetails,
                                                    @RequestBody CartItemRequestDto addCartItemRequestDto) {
-        return ResponseEntity.ok(cartService.addOrUpdateCartItems(userDetails.getUserId(), addCartItemRequestDto));
+        return ResponseEntity.ok(cartService.addOrUpdateItems(userDetails.getUserId(), addCartItemRequestDto));
+    }
+
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<CartDto> removeItem(@AuthenticationPrincipal EcommerceUserDetails userDetails,
+                                            @PathVariable Long itemId) {
+        return ResponseEntity.ok(cartService.removeItem(userDetails.getUserId(), itemId));
     }
 }
