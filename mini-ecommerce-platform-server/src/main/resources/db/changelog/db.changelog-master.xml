@@ -13,4 +13,5 @@
 
     <!-- Init data -->
     <include file="data/user-data-changelog.sql" relativeToChangelogFile="true" />
+    <include file="data/product-data-changelog.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>
