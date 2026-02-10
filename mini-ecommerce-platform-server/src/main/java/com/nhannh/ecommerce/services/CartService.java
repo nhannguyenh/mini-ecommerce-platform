@@ -52,12 +52,13 @@ public class CartService {
                 .collect(Collectors.toSet());
 
         double totalPrice = cartDto.getTotalPrice();
+        double productPrice = productDto.getPrice();
         if (items.isEmpty() || !productIds.contains(itemRequestDto.getProductId())) {
             CartItemDto cartItemDto = CartItemDto.builder()
                     .cartId(cartDto.getId())
                     .productId(itemRequestDto.getProductId())
                     .quantity(itemRequestDto.getQuantity())
-                    .price(productDto.getPrice())
+                    .price(productPrice)
                     .build();
             CartItemDto newItem = cartItemService.addOrUpdateCartItem(cartItemDto);
             totalPrice += newItem.getPrice() * newItem.getQuantity();
@@ -70,6 +71,9 @@ public class CartService {
                 if (itemRequestDto.getProductId().equals(item.getProductId())) {
                     oldPrice = item.getQuantity() * item.getPrice();
                     item.setQuantity(itemRequestDto.getQuantity());
+                    if (productPrice != item.getPrice()) {
+                        item.setPrice(productPrice);
+                    }
                     cartItemService.addOrUpdateCartItem(item);
                     totalPrice += item.getQuantity() * item.getPrice() - oldPrice;
                 }
