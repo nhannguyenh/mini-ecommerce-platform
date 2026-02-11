@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,13 @@ public class ProductService {
                 .orElseThrow(() -> new NoSuchElementException(
                         String.format("Cannot found product with id: %d", productId)
                 ));
+    }
+
+    @Transactional
+    public List<ProductDto> getProductsByIds(Set<Long> productIds) {
+        return productRepository.findAllById(productIds).stream()
+                .map(productMapper::mapToDto)
+                .toList();
     }
 
     @Transactional
