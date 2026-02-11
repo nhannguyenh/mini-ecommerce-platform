@@ -10,6 +10,8 @@
     <include file="ddl/product-changelog.sql" relativeToChangelogFile="true" />
     <include file="ddl/cart-changelog.sql" relativeToChangelogFile="true" />
     <include file="ddl/cart-items-changelog.sql" relativeToChangelogFile="true" />
+    <include file="ddl/order-changelog.sql" relativeToChangelogFile="true" />
+    <include file="ddl/order-items-changelog.sql" relativeToChangelogFile="true" />
 
     <!-- Init data -->
     <include file="data/user-data-changelog.sql" relativeToChangelogFile="true" />
