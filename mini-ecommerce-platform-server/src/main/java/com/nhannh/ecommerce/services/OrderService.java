@@ -53,22 +53,29 @@ public class OrderService {
                 .status(OrderStatus.CREATED)
                 .totalPrice(cartDto.getTotalPrice())
                 .build();
-        order = orderRepository.save(order);
+        try {
+            order = orderRepository.save(order);
 
-        // convert cart items to order items
-        for (CartItemDto cartItem : cartItems) {
-            ProductDto productDto = mapProductById.get(cartItem.getProductId());
-            double subTotal = productDto.getPrice() * cartItem.getQuantity();
+            // convert cart items to order items
+            for (CartItemDto cartItem : cartItems) {
+                ProductDto productDto = mapProductById.get(cartItem.getProductId());
+                double subTotal = productDto.getPrice() * cartItem.getQuantity();
 
-            OrderItemDto orderItem = OrderItemDto.builder()
-                    .orderId(order.getId())
-                    .productId(productDto.getId())
-                    .productName(productDto.getName())
-                    .productPrice(productDto.getPrice())
-                    .quantity(cartItem.getQuantity())
-                    .subTotal(subTotal)
-                    .build();
-            orderItemRepository.save(orderItemMapper.mapToEntity(orderItem));
+                OrderItemDto orderItem = OrderItemDto.builder()
+                        .orderId(order.getId())
+                        .productId(productDto.getId())
+                        .productName(productDto.getName())
+                        .productPrice(productDto.getPrice())
+                        .quantity(cartItem.getQuantity())
+                        .subTotal(subTotal)
+                        .build();
+                orderItemRepository.save(orderItemMapper.mapToEntity(orderItem));
+            }
+
+            // clear the cart
+            cartService.clearCart(userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot create the order", e);
         }
         return orderMapper.mapToDto(order);
     }
