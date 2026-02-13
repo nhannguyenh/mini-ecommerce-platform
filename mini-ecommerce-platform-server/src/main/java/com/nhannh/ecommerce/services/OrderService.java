@@ -8,6 +8,8 @@ import com.nhannh.ecommerce.mappers.OrderMapper;
 import com.nhannh.ecommerce.repositories.OrderItemRepository;
 import com.nhannh.ecommerce.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     private final CartService cartService;
     private final CartItemService cartItemService;
     private final ProductService productService;
@@ -60,6 +63,15 @@ public class OrderService {
             for (CartItemDto cartItem : cartItems) {
                 ProductDto productDto = mapProductById.get(cartItem.getProductId());
                 double subTotal = productDto.getPrice() * cartItem.getQuantity();
+
+                // validate quantity
+                int stockQuantity = productDto.getStockQuantity();
+                if (cartItem.getQuantity() > productDto.getStockQuantity()) {
+                    log.warn("We don't have enough product in the stock!");
+                } else {
+                    productDto.setStockQuantity(stockQuantity - cartItem.getQuantity());
+                    productService.updateProduct(productDto.getId(), productDto);
+                }
 
                 OrderItemDto orderItem = OrderItemDto.builder()
                         .orderId(order.getId())
