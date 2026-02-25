@@ -30,7 +30,6 @@ public class AuthController {
         return ResponseEntity.ok(
                 AuthResponseDto.builder()
                         .token(jwtUtils.generateToken(userDetails))
-                        .tokenLifespanMillis(jwtUtils.getJwtTokenLifeSpan())
                         .build()
         );
     }
