@@ -12,9 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +44,7 @@ public class CartService {
         ProductDto productDto = productService.getProductById(itemRequestDto.getProductId());
         this.validate(productDto, itemRequestDto);
 
-        List<CartItemDto> items = cartItemService.findByCartId(cartDto.getId());
+        List<CartItemDto> items = cartDto.getItems();
         Set<Long> productIds = items.stream()
                 .map(CartItemDto::getProductId)
                 .collect(Collectors.toSet());
@@ -63,7 +61,8 @@ public class CartService {
             CartItemDto newItem = cartItemService.addOrUpdateCartItem(cartItemDto);
             totalPrice += newItem.getPrice() * newItem.getQuantity();
 
-            cartDto.getItems().add(newItem.getId());
+            items.add(newItem);
+            cartDto.setItems(items);
             cartDto.setTotalPrice(totalPrice);
         } else {
             for (CartItemDto item : items) {
@@ -90,16 +89,24 @@ public class CartService {
         CartDto cartDto = this.getCart(userId);
 
         double totalPrice = cartDto.getTotalPrice();
-        Set<Long> itemIds = cartDto.getItems();
-        if (itemIds.contains(itemId)) {
-            CartItemDto cartItemDto = cartItemService.findById(itemId);
-            totalPrice -= cartItemDto.getPrice() * cartItemDto.getQuantity();
-            itemIds.remove(itemId);
-            cartItemService.removeItem(itemId);
+        List<CartItemDto> items = cartDto.getItems();
+        Set<Long> itemIds = getItemIds(items);
 
-            cartDto.setTotalPrice(totalPrice);
-            cartDto.setItems(itemIds);
-            cartRepository.save(cartMapper.mapToEntity(cartDto));
+        if (itemIds.contains(itemId)) {
+            CartItemDto cartItem = items.stream()
+                    .filter(item -> itemId.equals(item.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if (Objects.nonNull(cartItem)) {
+                totalPrice -= cartItem.getPrice() * cartItem.getQuantity();
+                itemIds.remove(itemId);
+                items.remove(cartItem);
+                cartItemService.removeItem(itemId);
+
+                cartDto.setTotalPrice(totalPrice);
+                cartDto.setItems(items);
+                cartRepository.save(cartMapper.mapToEntity(cartDto));
+            }
         } else {
             throw new NoSuchElementException(String.format("Item has id %d cannot be found in the current cart", itemId));
         }
@@ -107,13 +114,13 @@ public class CartService {
     }
 
     public CartDto clearCart(Long userId) {
-        CartDto cartDto = this.getCart(userId);
-        Set<Long> itemIds = cartDto.getItems();
+        CartDto cartDto = getCart(userId);
+        Set<Long> itemIds = getItemIds(cartDto.getItems());
 
         cartItemService.removeAllItems(itemIds);
         itemIds.clear();
 
-        cartDto.setItems(itemIds);
+        cartDto.setItems(new ArrayList<>());
         cartDto.setTotalPrice(0.0);
         cartRepository.save(cartMapper.mapToEntity(cartDto));
         return cartDto;
@@ -127,5 +134,11 @@ public class CartService {
         if (itemRequestDto.getQuantity() > productDto.getStockQuantity()) {
             throw new IllegalArgumentException("Product quantity is exceeding the available stock quantity");
         }
+    }
+
+    private Set<Long> getItemIds(List<CartItemDto> items) {
+        return items.stream()
+                .map(CartItemDto::getId)
+                .collect(Collectors.toSet());
     }
 }
