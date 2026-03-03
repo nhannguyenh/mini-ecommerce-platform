@@ -6,7 +6,6 @@ import com.nhannh.ecommerce.domain.entities.Cart;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class CartMapper {
@@ -28,10 +27,7 @@ public class CartMapper {
                 .userId(cart.getUserId())
                 .status(cart.getStatus())
                 .totalPrice(cart.getTotalPrice())
-                .items(items.stream()
-                        .map(CartItemDto::getId)
-                        .collect(Collectors.toSet())
-                )
+                .items(items)
                 .createdOn(cart.getCreatedOn())
                 .modifiedOn(cart.getModifiedOn())
                 .build();
