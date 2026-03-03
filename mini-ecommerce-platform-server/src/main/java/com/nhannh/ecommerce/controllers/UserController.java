@@ -1,7 +1,7 @@
 package com.nhannh.ecommerce.controllers;
 
-import com.nhannh.ecommerce.domain.dtos.UserDto;
-import com.nhannh.ecommerce.domain.entities.User;
+import com.nhannh.ecommerce.domain.dtos.users.UserDto;
+import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
 import com.nhannh.ecommerce.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.registerUser(userDto),HttpStatus.CREATED);
     }
 }
