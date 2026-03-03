@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTest {
+    private final String REGISTER_API_URL = "/api/users/register";
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,17 +45,13 @@ public class UserControllerTest {
     @AfterEach
     void tearDown() {
         objectMapper = null;
+        reset(userService);
     }
 
     @Test
     void shouldCreateUser_whenRequestValid_thenReturnOk() throws Exception {
-        String email = "test@local.com";
-        UserDto requestUser = UserDto.builder()
-                .email(email)
-                .password("password")
-                .role(UserRole.USER)
-                .build();
-
+        String email = "test@local.dev";
+        UserDto requestUser = this.createRequestUser(email);
         UserResponseDto mockUserResponse = UserResponseDto.builder()
                 .id(1L)
                 .email(email)
@@ -62,7 +60,7 @@ public class UserControllerTest {
 
         when(userService.registerUser(requestUser)).thenReturn(mockUserResponse);
 
-        mockMvc.perform(post("/api/users/register")
+        mockMvc.perform(post(REGISTER_API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestUser))
                 )
@@ -71,5 +69,35 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.email").value(email));
         verify(userService, times(1)).registerUser(requestUser);
+    }
+
+    @Test
+    void shouldFail_whenEmailExisted_thenReturnBadRequest() throws Exception {
+        String existedEmail = "existed_email@local.dev";
+        String errorMessage = String.format(
+                "Email: %s is existed, please check and use a different email to create user",
+                existedEmail
+        );
+        UserDto requestUser = this.createRequestUser(existedEmail);
+
+        when(userService.registerUser(requestUser)).thenThrow(new DataIntegrityViolationException(errorMessage));
+
+        mockMvc.perform(post(REGISTER_API_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestUser))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.statusCode").value(400))
+                .andExpect(jsonPath("$.message").value(errorMessage));
+        verify(userService, times(1)).registerUser(requestUser);
+    }
+
+    private UserDto createRequestUser(String email) {
+        return UserDto.builder()
+                .email(email)
+                .password("password")
+                .role(UserRole.USER)
+                .build();
     }
 }
