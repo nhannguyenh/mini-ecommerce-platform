@@ -1,6 +1,7 @@
 package com.nhannh.ecommerce.services;
 
-import com.nhannh.ecommerce.domain.dtos.UserDto;
+import com.nhannh.ecommerce.domain.dtos.users.UserDto;
+import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
 import com.nhannh.ecommerce.domain.entities.User;
 import com.nhannh.ecommerce.mappers.UserMapper;
 import com.nhannh.ecommerce.repositories.UserRepository;
@@ -19,7 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User registerUser(UserDto userDto) {
+    public UserResponseDto registerUser(UserDto userDto) {
         String email = userDto.getEmail();
         String existedEmailMessage = String.format(
                 "Email: %s is existed, please check and use a different email to create user",
@@ -31,6 +32,7 @@ public class UserService {
             log.warn(existedEmailMessage);
             throw new IllegalArgumentException(existedEmailMessage);
         }
-        return userRepository.save(userMapper.mapToUser(userDto));
+        User savedUser = userRepository.save(userMapper.mapToUser(userDto));
+        return userMapper.mapToUserResponseDto(savedUser);
     }
 }

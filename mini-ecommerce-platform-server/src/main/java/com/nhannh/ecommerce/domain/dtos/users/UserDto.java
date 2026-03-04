@@ -1,4 +1,4 @@
-package com.nhannh.ecommerce.domain.dtos;
+package com.nhannh.ecommerce.domain.dtos.users;
 
 import com.nhannh.ecommerce.domain.UserRole;
 import lombok.AllArgsConstructor;

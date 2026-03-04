@@ -1,7 +1,8 @@
 package com.nhannh.ecommerce.mappers;
 
 import com.nhannh.ecommerce.domain.UserRole;
-import com.nhannh.ecommerce.domain.dtos.UserDto;
+import com.nhannh.ecommerce.domain.dtos.users.UserDto;
+import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
 import com.nhannh.ecommerce.domain.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,14 @@ public class UserMapper {
                 .role(UserRole.USER)
                 .createdOn(userDto.getCreatedOn())
                 .modifiedOn(userDto.getModifiedOn())
+                .build();
+    }
+
+    public UserResponseDto mapToUserResponseDto(User user) {
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
                 .build();
     }
 }
