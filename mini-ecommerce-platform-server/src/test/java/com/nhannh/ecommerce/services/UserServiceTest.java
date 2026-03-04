@@ -6,7 +6,7 @@ import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
 import com.nhannh.ecommerce.domain.entities.User;
 import com.nhannh.ecommerce.mappers.UserMapper;
 import com.nhannh.ecommerce.repositories.UserRepository;
-import com.nhannh.ecommerce.utils.UserUtils;
+import com.nhannh.ecommerce.utils.UserTestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,9 +36,9 @@ class UserServiceTest {
         String email = "test@local.dev";
         String password = "$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm";
 
-        UserDto userInput = UserUtils.generateUserDto(email, "password");
-        User userToSave = UserUtils.generateUser(null, email, password);
-        User savedUser = UserUtils.generateUser(id, email, password);
+        UserDto userInput = UserTestUtils.generateUserDto(email, "password");
+        User userToSave = UserTestUtils.generateUser(null, email, password);
+        User savedUser = UserTestUtils.generateUser(id, email, password);
         UserResponseDto expectedUser = UserResponseDto.builder()
                 .id(id)
                 .email(email)
@@ -69,8 +69,8 @@ class UserServiceTest {
                 existedEmail
         );
 
-        UserDto userInput = UserUtils.generateUserDto(existedEmail, "password");
-        User savedUser = UserUtils.generateUser(1L, existedEmail, password);
+        UserDto userInput = UserTestUtils.generateUserDto(existedEmail, "password");
+        User savedUser = UserTestUtils.generateUser(1L, existedEmail, password);
 
         when(userRepository.findByEmail(existedEmail)).thenReturn(Optional.of(savedUser));
 

@@ -5,7 +5,7 @@ import com.nhannh.ecommerce.domain.UserRole;
 import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
 import com.nhannh.ecommerce.repositories.UserRepository;
-import com.nhannh.ecommerce.utils.UserUtils;
+import com.nhannh.ecommerce.utils.UserTestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ class UserServiceIT extends AbstractIntegrationTest {
     @Test
     void shouldCreateUser_whenRequestInputValid() {
         String email = "test@local.dev";
-        UserDto userInput = UserUtils.generateUserDto(email, "password");
+        UserDto userInput = UserTestUtils.generateUserDto(email, "password");
 
         UserResponseDto userSaved = userService.registerUser(userInput);
 
@@ -45,12 +45,12 @@ class UserServiceIT extends AbstractIntegrationTest {
                 email
         );
 
-        userRepository.save(UserUtils.generateUser(
+        userRepository.save(UserTestUtils.generateUser(
                 null,
                 email,
                 "$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm")
         );
-        UserDto userInput = UserUtils.generateUserDto(email, "password");
+        UserDto userInput = UserTestUtils.generateUserDto(email, "password");
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class, () -> userService.registerUser(userInput)

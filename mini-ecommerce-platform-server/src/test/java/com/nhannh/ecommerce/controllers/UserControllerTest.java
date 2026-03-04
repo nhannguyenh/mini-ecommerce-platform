@@ -6,7 +6,7 @@ import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
 import com.nhannh.ecommerce.filters.JwtAuthenticationFilter;
 import com.nhannh.ecommerce.services.UserService;
-import com.nhannh.ecommerce.utils.UserUtils;
+import com.nhannh.ecommerce.utils.UserTestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ public class UserControllerTest {
     @Test
     void shouldCreateUser_whenRequestValid_thenReturnOk() throws Exception {
         String email = "test@local.dev";
-        UserDto requestUser = UserUtils.generateUserDto(email, "password");
+        UserDto requestUser = UserTestUtils.generateUserDto(email, "password");
         UserResponseDto mockUserResponse = UserResponseDto.builder()
                 .id(1L)
                 .email(email)
@@ -79,7 +79,7 @@ public class UserControllerTest {
                 "Email: %s is existed, please check and use a different email to create user",
                 existedEmail
         );
-        UserDto requestUser = UserUtils.generateUserDto(existedEmail, "password");
+        UserDto requestUser = UserTestUtils.generateUserDto(existedEmail, "password");
 
         when(userService.registerUser(requestUser)).thenThrow(new DataIntegrityViolationException(errorMessage));
 

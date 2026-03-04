@@ -7,7 +7,7 @@ import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.entities.User;
 import com.nhannh.ecommerce.repositories.UserRepository;
 import com.nhannh.ecommerce.services.UserService;
-import com.nhannh.ecommerce.utils.UserUtils;
+import com.nhannh.ecommerce.utils.UserTestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class UserControllerIT extends AbstractIntegrationTest {
     @Test
     void shouldCreateUser_whenRequestInputValid_thenReturnOk() throws Exception {
         String email = "test@local.dev";
-        UserDto requestUser = UserUtils.generateUserDto(email, "password");
+        UserDto requestUser = UserTestUtils.generateUserDto(email, "password");
 
         mockMvc.perform(post(REGISTER_API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -74,9 +74,9 @@ class UserControllerIT extends AbstractIntegrationTest {
                 "Email: %s is existed, please check and use a different email to create user",
                 email
         );
-        UserDto requestUser = UserUtils.generateUserDto(email, "password");
+        UserDto requestUser = UserTestUtils.generateUserDto(email, "password");
 
-        userRepository.save(UserUtils.generateUser(
+        userRepository.save(UserTestUtils.generateUser(
                 null,
                 email,
                 "$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm")

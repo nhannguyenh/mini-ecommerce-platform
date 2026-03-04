@@ -4,7 +4,7 @@ import com.nhannh.ecommerce.domain.UserRole;
 import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.entities.User;
 
-public class UserUtils {
+public class UserTestUtils {
 
     public static UserDto generateUserDto(String email, String password) {
         return UserDto.builder()
