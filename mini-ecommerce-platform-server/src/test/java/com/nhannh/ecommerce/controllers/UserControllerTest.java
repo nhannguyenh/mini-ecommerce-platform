@@ -6,6 +6,7 @@ import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
 import com.nhannh.ecommerce.filters.JwtAuthenticationFilter;
 import com.nhannh.ecommerce.services.UserService;
+import com.nhannh.ecommerce.utils.UserUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class UserControllerTest {
     @Test
     void shouldCreateUser_whenRequestValid_thenReturnOk() throws Exception {
         String email = "test@local.dev";
-        UserDto requestUser = this.createRequestUser(email);
+        UserDto requestUser = UserUtils.generateUserDto(email, "password");
         UserResponseDto mockUserResponse = UserResponseDto.builder()
                 .id(1L)
                 .email(email)
@@ -78,7 +79,7 @@ public class UserControllerTest {
                 "Email: %s is existed, please check and use a different email to create user",
                 existedEmail
         );
-        UserDto requestUser = this.createRequestUser(existedEmail);
+        UserDto requestUser = UserUtils.generateUserDto(existedEmail, "password");
 
         when(userService.registerUser(requestUser)).thenThrow(new DataIntegrityViolationException(errorMessage));
 
@@ -91,13 +92,5 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.statusCode").value(400))
                 .andExpect(jsonPath("$.message").value(errorMessage));
         verify(userService, times(1)).registerUser(requestUser);
-    }
-
-    private UserDto createRequestUser(String email) {
-        return UserDto.builder()
-                .email(email)
-                .password("password")
-                .role(UserRole.USER)
-                .build();
     }
 }

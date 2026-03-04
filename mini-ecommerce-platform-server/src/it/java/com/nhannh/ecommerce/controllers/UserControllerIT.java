@@ -7,6 +7,9 @@ import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.entities.User;
 import com.nhannh.ecommerce.repositories.UserRepository;
 import com.nhannh.ecommerce.services.UserService;
+import com.nhannh.ecommerce.utils.UserUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -21,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserControllerIT extends AbstractIntegrationTest {
     private final String REGISTER_API_URL = "/api/users/register";
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private MockMvc mockMvc;
@@ -32,10 +34,22 @@ class UserControllerIT extends AbstractIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+    }
+
     @Test
-    void shouldCreateUser_whenRequestValid_thenReturnOk() throws Exception {
+    void shouldCreateUser_whenRequestInputValid_thenReturnOk() throws Exception {
         String email = "test@local.dev";
-        UserDto requestUser = this.createRequestUser(email);
+        UserDto requestUser = UserUtils.generateUserDto(email, "password");
 
         mockMvc.perform(post(REGISTER_API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,14 +74,12 @@ class UserControllerIT extends AbstractIntegrationTest {
                 "Email: %s is existed, please check and use a different email to create user",
                 email
         );
-        UserDto requestUser = this.createRequestUser(email);
+        UserDto requestUser = UserUtils.generateUserDto(email, "password");
 
-        userRepository.save(
-                User.builder()
-                        .email(email)
-                        .password("$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm")
-                        .role(UserRole.USER)
-                        .build()
+        userRepository.save(UserUtils.generateUser(
+                null,
+                email,
+                "$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm")
         );
 
         mockMvc.perform(post(REGISTER_API_URL)
@@ -78,13 +90,5 @@ class UserControllerIT extends AbstractIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.statusCode").value(400))
                 .andExpect(jsonPath("$.message").value(errorMessage));
-    }
-
-    private UserDto createRequestUser(String email) {
-        return UserDto.builder()
-                .email(email)
-                .password("password")
-                .role(UserRole.USER)
-                .build();
     }
 }
