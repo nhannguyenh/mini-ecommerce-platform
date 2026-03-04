@@ -12,7 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +34,7 @@ class UserServiceTest {
         Long id = 1L;
         String email = "test@local.dev";
         String password = "$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm";
+
         UserDto userInput = generateUserDto(email, password);
         User userToSave = generateUser(null, email, password);
         User savedUser = generateUser(id, email, password);
@@ -53,6 +57,30 @@ class UserServiceTest {
         verify(userRepository, times(1)).save(userToSave);
         verify(userMapper, times(1)).mapToUser(userInput);
         verify(userMapper, times(1)).mapToUserResponseDto(savedUser);
+    }
+
+    @Test
+    void shouldThrowException_whenEmailExisted() {
+        String existedEmail = "existed_email@local.dev";
+        String password = "$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm";
+        String errorMessage = String.format(
+                "Email: %s is existed, please check and use a different email to create user",
+                existedEmail
+        );
+
+        UserDto userInput = generateUserDto(existedEmail, password);
+        User savedUser = generateUser(1L, existedEmail, password);
+
+        when(userRepository.findByEmail(existedEmail)).thenReturn(Optional.of(savedUser));
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class, () -> userService.registerUser(userInput)
+        );
+
+        assertEquals(errorMessage, exception.getMessage());
+        verify(userRepository, never()).save(any());
+        verify(userMapper, never()).mapToUser(any());
+        verify(userMapper, never()).mapToUserResponseDto(any());
     }
 
     private UserDto generateUserDto(String email, String password) {
