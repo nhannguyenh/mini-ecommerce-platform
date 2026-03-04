@@ -1,6 +1,7 @@
 package com.nhannh.ecommerce.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhannh.ecommerce.constants.TestConstants;
 import com.nhannh.ecommerce.domain.UserRole;
 import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.dtos.users.UserResponseDto;
@@ -25,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTest {
-    private final String REGISTER_API_URL = "/api/users/register";
 
     @Autowired
     private MockMvc mockMvc;
@@ -61,7 +61,7 @@ public class UserControllerTest {
 
         when(userService.registerUser(requestUser)).thenReturn(mockUserResponse);
 
-        mockMvc.perform(post(REGISTER_API_URL)
+        mockMvc.perform(post(TestConstants.REGISTER_USER_API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestUser))
                 )
@@ -83,7 +83,7 @@ public class UserControllerTest {
 
         when(userService.registerUser(requestUser)).thenThrow(new DataIntegrityViolationException(errorMessage));
 
-        mockMvc.perform(post(REGISTER_API_URL)
+        mockMvc.perform(post(TestConstants.REGISTER_USER_API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestUser))
                 )

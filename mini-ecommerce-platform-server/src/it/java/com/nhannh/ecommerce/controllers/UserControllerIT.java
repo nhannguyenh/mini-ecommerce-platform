@@ -2,6 +2,7 @@ package com.nhannh.ecommerce.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhannh.ecommerce.AbstractIntegrationTest;
+import com.nhannh.ecommerce.constants.TestConstants;
 import com.nhannh.ecommerce.domain.UserRole;
 import com.nhannh.ecommerce.domain.dtos.users.UserDto;
 import com.nhannh.ecommerce.domain.entities.User;
@@ -51,7 +52,7 @@ class UserControllerIT extends AbstractIntegrationTest {
         String email = "test@local.dev";
         UserDto requestUser = UserTestUtils.generateUserDto(email, "password");
 
-        mockMvc.perform(post(REGISTER_API_URL)
+        mockMvc.perform(post(TestConstants.REGISTER_USER_API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestUser))
                 )
@@ -82,7 +83,7 @@ class UserControllerIT extends AbstractIntegrationTest {
                 "$2a$10$cb.KYABzfcZSqTwDzvqsBe9cuE7sDH/F5TMOJVuyvann492vm6Xgm")
         );
 
-        mockMvc.perform(post(REGISTER_API_URL)
+        mockMvc.perform(post(TestConstants.REGISTER_USER_API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestUser))
                 )
