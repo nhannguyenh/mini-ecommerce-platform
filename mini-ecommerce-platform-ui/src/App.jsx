@@ -1,32 +1,46 @@
 import './App.css'
-import {Link, Route, Routes} from 'react-router-dom';
+import {useState} from "react";
+import {Route, Routes} from "react-router-dom";
+import {AuthContext} from "./AuthContext.js";
+import Navbar from "./components/Navbar.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
-function HomePage() {
-    return (
-        <h1>Home Page</h1>
-    );
-}
-
-function AboutPage() {
-    return (
-        <h1>About Page</h1>
-    );
-}
 
 function App() {
+    const [user, setUser] = useState({
+        name: "",
+        isAuth: false
+    });
+
+    function login(name) {
+        setUser({
+            name: name,
+            isAuth: true
+        })
+    }
+
+    function logout() {
+        setUser({
+            name: "",
+            isAuth: false
+        })
+    }
+
     return (
         <div>
-            <nav style={{display: "flex", gap: "1rem", marginBottom: "5px"}}>
-                <Link to={"/"}>Home</Link>
-                <Link to={"/about"}>About</Link>
-            </nav>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="*" element={<h1>404 Not Found</h1>} />
-            </Routes>
+            <AuthContext.Provider value={{user, login, logout}}>
+                <Navbar/>
+                <Routes>
+                    <Route path="/" element={<HomePage/>}/>
+                    <Route path="/profile" element={<ProfilePage/>}/>
+                    <Route path="/login" element={<LoginPage/>}/>
+                    <Route path="*" element={<h1>404 Not Found</h1>}/>
+                </Routes>
+            </AuthContext.Provider>
         </div>
-    );
+    )
 }
 
 export default App
