@@ -35,6 +35,9 @@ public class Product extends AbstractEntity {
     @Column(nullable = false)
     private Integer stockQuantity;
 
+    @Column(nullable = false)
+    private String imageUrl;
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -45,11 +48,12 @@ public class Product extends AbstractEntity {
                 && Objects.equals(description, product.description)
                 && Objects.equals(price, product.price)
                 && Objects.equals(sku, product.sku)
-                && Objects.equals(stockQuantity, product.stockQuantity);
+                && Objects.equals(stockQuantity, product.stockQuantity)
+                && Objects.equals(imageUrl, product.imageUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, name, description, price, sku, stockQuantity);
+        return Objects.hash(super.hashCode(), id, name, description, price, sku, stockQuantity, imageUrl);
     }
 }

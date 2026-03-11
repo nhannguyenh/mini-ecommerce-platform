@@ -15,6 +15,7 @@ public class ProductMapper {
                 .price(productDto.getPrice())
                 .sku(productDto.getSku())
                 .stockQuantity(productDto.getStockQuantity())
+                .imageUrl(productDto.getImageUrl())
                 .createdOn(productDto.getCreatedOn())
                 .modifiedOn(productDto.getModifiedOn())
                 .build();
@@ -29,6 +30,7 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .sku(product.getSku())
                 .stockQuantity(product.getStockQuantity())
+                .imageUrl(product.getImageUrl())
                 .createdOn(product.getCreatedOn())
                 .modifiedOn(product.getModifiedOn())
                 .build();

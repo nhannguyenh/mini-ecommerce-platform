@@ -8,6 +8,7 @@ CREATE TABLE products (
     price NUMERIC(19,2) NOT NULL,
     sku VARCHAR(100) NOT NULL,
     stock_quantity INTEGER NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
     created_on TIMESTAMP NOT NULL,
     modified_on TIMESTAMP NOT NULL,
     CONSTRAINT uk_products_sku UNIQUE (sku),
