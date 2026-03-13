@@ -56,7 +56,7 @@ public class UserControllerTest {
         UserResponseDto mockUserResponse = UserResponseDto.builder()
                 .id(1L)
                 .email(email)
-                .role(UserRole.USER)
+                .role(UserRole.USER.name())
                 .build();
 
         when(userService.registerUser(requestUser)).thenReturn(mockUserResponse);
