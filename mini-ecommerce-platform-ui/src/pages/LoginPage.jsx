@@ -2,7 +2,7 @@ import axios from "axios";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-function LoginPage() {
+function LoginPage({setUser}) {
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -22,7 +22,7 @@ function LoginPage() {
         try {
             const response = await axios.post('/api/auth/login', formData);
             localStorage.setItem("token", response.data.token);
-            // setUser(response.data.email);
+            setUser(response.data.user);
             navigate("/");
         } catch (e) {
             setError(e.response?.data?.message || "Login failed");
@@ -34,7 +34,7 @@ function LoginPage() {
             <div className="container">
                 <div className="auth-container">
                     <h1 className="page-title">Login</h1>
-                    {error.email && (
+                    {error && (
                         <span className="form-error">{error}</span>
                     )}
                     <form className="auth-form" onSubmit={handleSubmit}>

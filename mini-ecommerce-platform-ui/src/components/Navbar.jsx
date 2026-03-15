@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 
-function Navbar() {
+function Navbar({user}) {
     return (
         <nav className="navbar">
             <div className="navbar-container">
@@ -16,14 +16,25 @@ function Navbar() {
                     </Link>
                 </div>
                 <div className="navbar-auth">
-                    <div className="navbar-auth-links">
-                        <Link to="/login" className="btn btn-secondary">
-                            Login
-                        </Link>
-                        <Link to="/register" className="btn btn-primary">
-                            Register
-                        </Link>
-                    </div>
+                    {user != null ? (
+                        <div className="navbar-auth-links">
+                            <p className="navbar-link welcome-text">
+                                Welcome, <span>{user.email}</span>
+                            </p>
+                            <button className="btn btn-primary">
+                                Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="navbar-auth-links">
+                            <Link to="/login" className="btn btn-secondary">
+                                Login
+                            </Link>
+                            <Link to="/register" className="btn btn-primary">
+                                Register
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
         </nav>

@@ -17,7 +17,7 @@ public class EcommerceUserDetailsService implements UserDetailsService {
     public EcommerceUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format("User not found with email: %s", email)
+                        String.format("User %s not found!", email)
                 ));
         return new EcommerceUserDetails(user);
     }

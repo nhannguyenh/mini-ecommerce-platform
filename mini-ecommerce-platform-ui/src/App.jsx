@@ -1,4 +1,5 @@
 import './App.css'
+import {useState} from "react";
 import {Route, Routes} from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
@@ -8,7 +9,7 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 
 
 function App() {
-    // const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);
     // const [error, setError] = useState('');
 
     // useEffect(() => {
@@ -33,11 +34,11 @@ function App() {
 
     return (
         <div className="app">
-            <Navbar />
+            <Navbar user={user}/>
             <Routes>
                 <Route path={"/"} element={<HomePage />} />
                 <Route path={"/register"} element={<RegisterPage />} />
-                <Route path={"login"} element={<LoginPage />} />
+                <Route path={"login"} element={<LoginPage setUser={setUser} />} />
                 <Route path={"/checkout"} element={<CheckoutPage />} />
             </Routes>
         </div>

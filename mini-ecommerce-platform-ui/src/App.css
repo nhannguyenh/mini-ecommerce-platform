@@ -87,6 +87,10 @@ body {
     gap: 0.5rem;
 }
 
+.welcome-text {
+    margin: auto;
+}
+
 .page {
     flex: 1;
     padding: 2rem 0;
