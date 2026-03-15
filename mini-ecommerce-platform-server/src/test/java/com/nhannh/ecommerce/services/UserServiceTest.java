@@ -42,7 +42,7 @@ class UserServiceTest {
         UserResponseDto expectedUser = UserResponseDto.builder()
                 .id(id)
                 .email(email)
-                .role(UserRole.USER)
+                .role(UserRole.USER.name())
                 .build();
 
         when(userMapper.mapToUser(userInput)).thenReturn(userToSave);
@@ -53,7 +53,7 @@ class UserServiceTest {
 
         assertEquals(id, actualUser.getId());
         assertEquals(email, actualUser.getEmail());
-        assertEquals(UserRole.USER, actualUser.getRole());
+        assertEquals(UserRole.USER.name(), actualUser.getRole());
         verify(userRepository, times(1)).findByEmail(email);
         verify(userRepository, times(1)).save(userToSave);
         verify(userMapper, times(1)).mapToUser(userInput);

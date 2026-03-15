@@ -34,7 +34,7 @@ class UserServiceIT extends AbstractIntegrationTest {
 
         assertNotNull(userSaved.getId());
         assertEquals(email, userSaved.getEmail());
-        assertEquals(UserRole.USER, userSaved.getRole());
+        assertEquals(UserRole.USER.name(), userSaved.getRole());
     }
 
     @Test
