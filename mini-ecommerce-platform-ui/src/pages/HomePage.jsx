@@ -1,17 +1,6 @@
-import axios from "axios";
-import {useEffect, useState} from "react";
 import ProductCard from "../components/ProductCard.jsx";
 
-function HomePage() {
-    const [products, setProducts] = useState([]);
-
-    useEffect(() => {
-        axios.get("http://localhost:8080/api/products")
-            .then((response) => {
-                setProducts(response.data);
-            });
-    }, []);
-
+function HomePage({products}) {
     return (
         <div className="page">
             <div className="home-hero">

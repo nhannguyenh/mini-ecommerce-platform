@@ -1,6 +1,11 @@
 import {Link} from "react-router-dom";
 
-function Navbar({user}) {
+function Navbar({user, setUser}) {
+    function logout() {
+        setUser(null);
+        localStorage.removeItem("token");
+    }
+
     return (
         <nav className="navbar">
             <div className="navbar-container">
@@ -21,7 +26,7 @@ function Navbar({user}) {
                             <p className="navbar-link welcome-text">
                                 Welcome, <span>{user.email}</span>
                             </p>
-                            <button className="btn btn-primary">
+                            <button className="btn btn-primary" onClick={logout}>
                                 Logout
                             </button>
                         </div>
