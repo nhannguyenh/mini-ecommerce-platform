@@ -1,0 +1,100 @@
+.shopping-cart-container {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    background: #f5f5f5;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+/* LEFT */
+.shopping-cart-container .cart {
+    flex: 2;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-item img {
+    width: 70px;
+    border-radius: 10px;
+}
+
+.details {
+    flex: 2;
+}
+
+.quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.price {
+    width: 80px;
+    font-weight: bold;
+}
+
+.remove {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* RIGHT */
+.summary {
+    flex: 1;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.summary input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.card-input {
+    display: flex;
+    gap: 10px;
+}
+
+.card-input button {
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.totals div {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.total {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.checkout {
+    width: 100%;
+    padding: 15px;
+    background: black;
+    color: white;
+    border: none;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 8px;
+}

@@ -3,10 +3,10 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {Route, Routes} from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
-import CheckoutPage from "./pages/CheckoutPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
+import CheckoutPage from "./pages/shopping-cart/CheckoutPage.jsx";
 
 
 function App() {
@@ -19,27 +19,7 @@ function App() {
                 setProducts(response.data);
             });
     }, []);
-    // const [error, setError] = useState('');
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         const token = localStorage.getItem("token");
-    //
-    //         if (token) {
-    //             try {
-    //                 const response = await axios.post("/api/auth/login", {
-    //                     headers: {Authorization: `Bearer ${token}`}
-    //                 });
-    //                 setUser(response.data);
-    //             } catch (e) {
-    //                 setError(`Failed to fetch user: ${e.message}`);
-    //                 localStorage.removeItem("token");
-    //             }
-    //
-    //         }
-    //     }
-    //     fetchUser();
-    // }, [])
+    const [error, setError] = useState('');
 
     return (
         <div className="app">
@@ -48,7 +28,7 @@ function App() {
                 <Route path={"/"} element={<HomePage products={products} />} />
                 <Route path={"/register"} element={<RegisterPage />} />
                 <Route path={"login"} element={<LoginPage setUser={setUser} />} />
-                <Route path={"/checkout"} element={<CheckoutPage />} />
+                <Route path={"/checkout"} element={<CheckoutPage setError={setError} />} />
             </Routes>
         </div>
     )
