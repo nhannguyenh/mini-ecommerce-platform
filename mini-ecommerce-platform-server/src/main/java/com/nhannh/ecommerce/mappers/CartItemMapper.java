@@ -1,6 +1,7 @@
 package com.nhannh.ecommerce.mappers;
 
 import com.nhannh.ecommerce.domain.dtos.CartItemDto;
+import com.nhannh.ecommerce.domain.dtos.ProductDto;
 import com.nhannh.ecommerce.domain.entities.CartItem;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,7 @@ public class CartItemMapper {
         return CartItem.builder()
                 .id(cartItemDto.getId())
                 .cartId(cartItemDto.getCartId())
-                .productId(cartItemDto.getProductId())
+                .productId(cartItemDto.getProduct().getId())
                 .price(cartItemDto.getPrice())
                 .quantity(cartItemDto.getQuantity())
                 .createdOn(cartItemDto.getCreatedOn())
@@ -19,11 +20,11 @@ public class CartItemMapper {
                 .build();
     }
 
-    public CartItemDto mapToDto(CartItem cartItem) {
+    public CartItemDto mapToDto(CartItem cartItem, ProductDto product) {
         return CartItemDto.builder()
                 .id(cartItem.getId())
                 .cartId(cartItem.getCartId())
-                .productId(cartItem.getProductId())
+                .product(product)
                 .price(cartItem.getPrice())
                 .quantity(cartItem.getQuantity())
                 .createdOn(cartItem.getCreatedOn())

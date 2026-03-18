@@ -37,11 +37,11 @@ function CheckoutPage({setError}) {
                 {isEmpty(cart) ? <></> : (
                     cart.items.map((item) => (
                         <div className="cart-item" key={item.id}>
-                            <img src={item.image} alt="" />
+                            <img src={item.product.imageUrl} alt="" />
 
                             <div className="details">
-                                <h4>{item.name}</h4>
-                                <p>#{item.id}</p>
+                                <h4>{item.product.name}</h4>
+                                <p>#{item.product.sku}</p>
                             </div>
 
                             <div className="quantity">
@@ -50,11 +50,9 @@ function CheckoutPage({setError}) {
                                 <button>+</button>
                             </div>
 
-                            <div className="price">${item.price}</div>
+                            <div className="price">${item.product.price}</div>
 
-                            <button className="remove">
-                                ×
-                            </button>
+                            <button className="remove">×</button>
                         </div>
                     ))
                 )}
