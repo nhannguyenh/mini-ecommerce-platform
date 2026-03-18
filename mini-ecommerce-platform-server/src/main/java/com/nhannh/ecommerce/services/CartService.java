@@ -46,7 +46,7 @@ public class CartService {
 
         List<CartItemDto> items = cartDto.getItems();
         Set<Long> productIds = items.stream()
-                .map(CartItemDto::getProductId)
+                .map((item) -> item.getProduct().getId())
                 .collect(Collectors.toSet());
 
         double totalPrice = cartDto.getTotalPrice();
@@ -54,7 +54,7 @@ public class CartService {
         if (items.isEmpty() || !productIds.contains(itemRequestDto.getProductId())) {
             CartItemDto cartItemDto = CartItemDto.builder()
                     .cartId(cartDto.getId())
-                    .productId(itemRequestDto.getProductId())
+                    .product(productDto)
                     .quantity(itemRequestDto.getQuantity())
                     .price(productPrice)
                     .build();
@@ -67,7 +67,7 @@ public class CartService {
         } else {
             for (CartItemDto item : items) {
                 double oldPrice = 0;
-                if (itemRequestDto.getProductId().equals(item.getProductId())) {
+                if (itemRequestDto.getProductId().equals(item.getProduct().getId())) {
                     oldPrice = item.getQuantity() * item.getPrice();
                     item.setQuantity(itemRequestDto.getQuantity());
                     if (productPrice != item.getPrice()) {

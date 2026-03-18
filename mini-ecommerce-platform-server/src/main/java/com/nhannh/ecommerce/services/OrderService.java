@@ -44,7 +44,7 @@ public class OrderService {
 
         // get products from items
         Set<Long> productIds = cartItems.stream()
-                .map(CartItemDto::getProductId)
+                .map((item) -> item.getProduct().getId())
                 .collect(Collectors.toSet());
         List<ProductDto> productDtos = productService.getProductsByIds(productIds);
         Map<Long, ProductDto> mapProductById = productDtos.stream()
@@ -61,7 +61,7 @@ public class OrderService {
 
             // convert cart items to order items
             for (CartItemDto cartItem : cartItems) {
-                ProductDto productDto = mapProductById.get(cartItem.getProductId());
+                ProductDto productDto = mapProductById.get(cartItem.getProduct().getId());
                 double subTotal = productDto.getPrice() * cartItem.getQuantity();
 
                 // validate quantity
