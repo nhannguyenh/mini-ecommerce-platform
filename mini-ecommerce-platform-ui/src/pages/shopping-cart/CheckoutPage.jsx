@@ -28,6 +28,21 @@ function CheckoutPage({setError}) {
         return cart.length === 0;
     }
 
+    function increaseQuantity(itemId) {
+        setCart(prevCart => ({
+            ...prevCart,
+            items: prevCart.items.map(item =>
+                item.id === itemId
+                    ? {
+                        ...item,
+                        quantity: item.quantity + 1,
+                        price: item.product.price * (item.quantity + 1)
+                    }
+                    : item
+            )
+        }));
+    }
+
     return (
         <div className="shopping-cart-container">
             {/* LEFT: Cart */}
@@ -47,7 +62,7 @@ function CheckoutPage({setError}) {
                             <div className="quantity">
                                 <button>-</button>
                                 <span>{item.quantity}</span>
-                                <button>+</button>
+                                <button onClick={() => increaseQuantity(item.id)}>+</button>
                             </div>
 
                             <div className="price">${item.product.price}</div>
